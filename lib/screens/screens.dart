@@ -7,3 +7,5 @@ import 'package:turnamen_frontend/network_utils/api.dart';
 
 part 'home_screen.dart';
 part 'welcome_screen.dart';
+part 'modal_login.dart';
+part 'modal_register.dart';
