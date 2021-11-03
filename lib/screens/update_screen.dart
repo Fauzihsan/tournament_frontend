@@ -1,38 +1,56 @@
 part of 'screens.dart';
 
-class modalRegister extends StatefulWidget {
-  const modalRegister({Key? key}) : super(key: key);
+class updateScreen extends StatefulWidget {
+  final String dataEdit;
+  const updateScreen({Key? key, required this.dataEdit}) : super(key: key);
 
   @override
-  _modalRegisterState createState() => _modalRegisterState();
+  _updateScreenState createState() => _updateScreenState();
 }
 
-class _modalRegisterState extends State<modalRegister> {
-  String emailDaftar = "", passwordDaftar = "", role = "", name = "";
+class _updateScreenState extends State<updateScreen> {
+  late Map<String, dynamic> dataNew;
+  String email = "", password = "", role = "", name = "", image = "";
+  int id = 0;
+  final _controllerEmail = TextEditingController();
+  final _controllerName = TextEditingController();
+  final _controllerRole = TextEditingController();
+  final _controllerImage = TextEditingController();
 
-  void register() async {
+  @override
+  void initState() {
+    super.initState();
+    dataNew = json.decode(widget.dataEdit);
+    id = dataNew['id'] ?? 0;
+    email = dataNew['email'] ?? "";
+    name = dataNew['name'] ?? "";
+    role = dataNew['role'] ?? "";
+    image = dataNew['image'] ?? "";
+
+    _controllerEmail.text = dataNew['email'] ?? "";
+    _controllerName.text = dataNew['name'] ?? "";
+    _controllerRole.text = dataNew['role'] ?? "";
+    _controllerImage.text = dataNew['image'] ?? "";
+  }
+
+  void update() async {
     var data = {
-      'email': emailDaftar,
-      'password': passwordDaftar,
+      'email': email,
+      'password': password,
       'role': role,
-      'name': name,
+      'name': name
     };
-
-    var res = await Network().authData(data, '/register');
+    var res = await Network().authData(data, '/update/' + id.toString());
     var body = json.decode(res.body);
-
     print(body);
     if (body['status'] == 1) {
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(const SnackBar(content: Text("Register Berhasil")));
       Navigator.of(context).pushNamed('/home');
     } else {
       var pesanError = "";
       if (body['reason'] != null) {
-        // pesanError = body['reason'][0];
         pesanError = body['reason'];
       } else {
-        pesanError = "Gagal Register";
+        pesanError = "Gagal UPDATE";
       }
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(pesanError)));
@@ -79,15 +97,7 @@ class _modalRegisterState extends State<modalRegister> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Hello... ',
-                                    style: TextStyle(
-                                      color: whiteColor,
-                                      fontSize: 20,
-                                    )),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text('REGISTER ',
+                                Text('UDPATE DATA ',
                                     style: TextStyle(
                                         color: whiteColor,
                                         fontSize: 20,
@@ -113,7 +123,8 @@ class _modalRegisterState extends State<modalRegister> {
                         //FIELD EMAIL
                         TextField(
                             style: TextStyle(color: Colors.white),
-                            onChanged: (value) => emailDaftar = value,
+                            controller: _controllerEmail,
+                            onChanged: (value) => email = value,
                             decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -143,6 +154,7 @@ class _modalRegisterState extends State<modalRegister> {
                         //FIELD NAMA
                         TextField(
                             style: TextStyle(color: Colors.white),
+                            controller: _controllerName,
                             onChanged: (value) => name = value,
                             decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
@@ -173,8 +185,7 @@ class _modalRegisterState extends State<modalRegister> {
                         //FIELD PASSWORD
                         TextField(
                             style: TextStyle(color: Colors.white),
-                            onChanged: (value) => passwordDaftar = value,
-                            obscureText: _isObscure,
+                            onChanged: (value) => password = value,
                             decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -210,6 +221,7 @@ class _modalRegisterState extends State<modalRegister> {
                         //FIELD ROLE
                         TextField(
                             style: TextStyle(color: Colors.white),
+                            controller: _controllerRole,
                             onChanged: (value) => role = value,
                             decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
@@ -241,9 +253,9 @@ class _modalRegisterState extends State<modalRegister> {
                           width: MediaQuery.of(context).size.width -
                               2 * defaultMargin,
                           child: ElevatedButton(
-                              onPressed: () => register(),
+                              onPressed: () => update(),
                               child: Text(
-                                'Register',
+                                'UPDATE',
                                 style: secondaryTextStyle.copyWith(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
@@ -258,22 +270,7 @@ class _modalRegisterState extends State<modalRegister> {
                                           BorderRadius.circular(15)))),
                         ),
                         SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Already have account? ",
-                                style: secondaryTextStyle.copyWith(
-                                    color: whiteColor, fontSize: 10)),
-                            Text(
-                              "Login",
-                              style: secondaryTextStyle.copyWith(
-                                  color: whiteColor,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11),
-                            )
-                          ],
-                        ),
+
                         SizedBox(height: defaultMargin)
                       ],
                     ),

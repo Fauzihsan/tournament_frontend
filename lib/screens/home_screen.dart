@@ -12,6 +12,24 @@ class homeScreen extends StatefulWidget {
 class _homeScreenState extends State<homeScreen> {
   List data = List.empty();
 
+  void delete(id) async {
+    var res = await Network().authData(data, '/delete/' + id.toString());
+    var body = json.decode(res.body);
+    print(id);
+    if (body['status'] == 1) {
+      Navigator.of(context).pushNamed('/home');
+    } else {
+      var pesanError = "";
+      if (body['reason'] != null) {
+        pesanError = body['reason'];
+      } else {
+        pesanError = "Gagal DELETE";
+      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(pesanError)));
+    }
+  }
+
   Future<String> getData() async {
     var res = await Network().getData('/showAll');
     var body = json.decode(res.body);
@@ -107,7 +125,29 @@ class _homeScreenState extends State<homeScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               FlatButton(
-                                onPressed: () {},
+                                // onPressed: () async {
+                                //   int id = data[index]["id"];
+                                //   var res = await Network().authData(
+                                //       data, '/delete/' + id.toString());
+                                //   var body = json.decode(res.body);
+                                //   print(body);
+                                //   if (body['status'] == 1) {
+                                //     Navigator.of(context).pushNamed('/home');
+                                //     print("sukses");
+                                //   } else {
+                                //     var pesanError = "";
+                                //     if (body['reason'] != null) {
+                                //       pesanError = body['reason'];
+                                //     } else {
+                                //       pesanError = "Gagal DELETE";
+                                //     }
+                                //     ScaffoldMessenger.of(context).showSnackBar(
+                                //         SnackBar(content: Text(pesanError)));
+                                //   }
+                                // },
+                                onPressed: () {
+                                  delete(data[index]["id"]);
+                                },
                                 padding: EdgeInsets.all(10),
                                 child: Icon(
                                   Icons.delete,
@@ -117,7 +157,15 @@ class _homeScreenState extends State<homeScreen> {
                                 shape: CircleBorder(),
                               ),
                               FlatButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return updateScreen(
+                                            dataEdit: jsonEncode(data[index]));
+                                      });
+                                },
                                 padding: EdgeInsets.all(10),
                                 child: Icon(
                                   Icons.create_rounded,
