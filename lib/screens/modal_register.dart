@@ -10,6 +10,7 @@ class modalRegister extends StatefulWidget {
 class _modalRegisterState extends State<modalRegister> {
   String emailDaftar = "", passwordDaftar = "", role = "", name = "";
 
+  TextEditingController emailController = TextEditingController();
   void register() async {
     var data = {
       'email': emailDaftar,
@@ -25,7 +26,13 @@ class _modalRegisterState extends State<modalRegister> {
     if (body['status'] == 1) {
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(const SnackBar(content: Text("Register Berhasil")));
-      Navigator.of(context).pushNamed('/home');
+      final sp = await SharedPreferences.getInstance();
+      sp.setString('email', emailController.text.toString());
+
+      String? emailUser = sp.getString('email');
+      // Navigator.of(context).pushNamed('/home');
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => splashScreenPage(email: emailUser!)));
     } else {
       var pesanError = "";
       if (body['reason'] != null) {
@@ -112,6 +119,7 @@ class _modalRegisterState extends State<modalRegister> {
                         SizedBox(height: 25),
                         //FIELD EMAIL
                         TextField(
+                            controller: emailController,
                             style: TextStyle(color: Colors.white),
                             onChanged: (value) => emailDaftar = value,
                             decoration: InputDecoration(

@@ -3,7 +3,8 @@
 part of 'screens.dart';
 
 class homeScreen extends StatefulWidget {
-  const homeScreen({Key? key}) : super(key: key);
+  final String dataEmail;
+  const homeScreen({Key? key, required this.dataEmail}) : super(key: key);
 
   @override
   _homeScreenState createState() => _homeScreenState();
@@ -12,8 +13,23 @@ class homeScreen extends StatefulWidget {
 class _homeScreenState extends State<homeScreen> {
   List data = List.empty();
 
+  Future logout() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.remove('email');
+    Fluttertoast.showToast(
+        msg: "BERHASIL LOGOUT",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
+
+    Navigator.of(context).pushNamed('/');
+  }
+
   void delete(id) async {
-    var res = await Network().authData(data, '/delete/' + id.toString());
+    var res = await Network().deleteData('/delete/' + id.toString());
     var body = json.decode(res.body);
     print(id);
     if (body['status'] == 1) {
@@ -56,9 +72,30 @@ class _homeScreenState extends State<homeScreen> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Color.fromRGBO(0, 103, 102, 1),
-        title: Text("Home",
+        title: Text(widget.dataEmail,
             style: TextStyle(color: Color.fromRGBO(0, 103, 102, 1))),
         backgroundColor: Colors.white70,
+        leading: GestureDetector(
+          onTap: () {/* Write listener code here */},
+          child: Icon(
+            Icons.menu, // add custom icons also
+          ),
+        ),
+        actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {},
+                child: Icon(
+                  Icons.search,
+                  size: 26.0,
+                ),
+              )),
+          MaterialButton(
+              color: Colors.red,
+              child: Text("LOGOUT"),
+              onPressed: () => logout()),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(

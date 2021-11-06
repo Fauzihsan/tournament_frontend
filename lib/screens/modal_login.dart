@@ -9,8 +9,10 @@ class modalLogin extends StatefulWidget {
 
 class _modalLoginState extends State<modalLogin> {
   String email = "", password = "";
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
 
-  void login() async {
+  Future login() async {
     var data = {'email': email, 'password': password};
     print(data);
     var res = await Network().authData(data, '/login');
@@ -19,7 +21,13 @@ class _modalLoginState extends State<modalLogin> {
     if (body['status'] == 1) {
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(const SnackBar(content: Text("Login Berhasil")));
-      Navigator.of(context).pushNamed('/home');
+      final sp = await SharedPreferences.getInstance();
+      sp.setString('email', emailController.text.toString());
+
+      String? emailUser = sp.getString('email');
+      // Navigator.of(context).pushNamed('/home');
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => splashScreenPage(email: emailUser!)));
     } else {
       var pesanError = "";
       if (body['reason'] != null) {
@@ -27,8 +35,16 @@ class _modalLoginState extends State<modalLogin> {
       } else {
         pesanError = "Gagal Login";
       }
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(pesanError)));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(SnackBar(content: Text(pesanError)));
+      Fluttertoast.showToast(
+          msg: pesanError,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
 
@@ -106,6 +122,7 @@ class _modalLoginState extends State<modalLogin> {
                         SizedBox(height: 25),
                         //FIELD EMAIL
                         TextField(
+                            controller: emailController,
                             style: TextStyle(color: Colors.white),
                             cursorColor: Colors.white,
                             onChanged: (value) => email = value,
@@ -138,6 +155,7 @@ class _modalLoginState extends State<modalLogin> {
                         SizedBox(height: 20),
                         //FIELD PASSWORD
                         TextField(
+                            controller: passController,
                             style: TextStyle(color: Colors.white),
                             onChanged: (value) => password = value,
                             obscureText: _isObscure,
