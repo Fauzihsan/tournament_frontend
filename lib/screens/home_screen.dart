@@ -33,7 +33,10 @@ class _homeScreenState extends State<homeScreen> {
     var body = json.decode(res.body);
     print(id);
     if (body['status'] == 1) {
-      Navigator.of(context).pushNamed('/home');
+      final sp = await SharedPreferences.getInstance();
+      String? emailUser = sp.getString('email');
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => splashScreenPage(email: emailUser!)));
     } else {
       var pesanError = "";
       if (body['reason'] != null) {
