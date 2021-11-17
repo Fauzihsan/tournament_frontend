@@ -25,9 +25,9 @@ class _modalLoginState extends State<modalLogin> {
       sp.setString('email', emailController.text.toString());
 
       String? emailUser = sp.getString('email');
-      // Navigator.of(context).pushNamed('/home');
+      // Navigator.of(context).pushNamed('/');
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => splashScreenPage(email: emailUser!)));
+      builder: (context) => splashScreenPage(email: emailUser!)));
     } else {
       var pesanError = "";
       if (body['reason'] != null) {

@@ -11,14 +11,26 @@ void main() async {
   // SharedPreferences sp = await SharedPreferences.getInstance();
   // var email = sp.getString('email');
   // runApp(MyApp(dataEmail: jsonEncode(email)));
-  runApp(MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final sp = await _prefs;
+  String email = "";
+  try {
+    email = sp.getString('email') ?? "";
+    print("sp ada");
+  } catch (e) {
+    print(e);
+  }
+
+  runApp(MyApp(dataEmail: email));
 }
 
 class MyApp extends StatelessWidget {
-  // final String dataEmail;
+  final String dataEmail;
   // const MyApp({Key? key, required this.dataEmail}) : super(key: key);
 
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.dataEmail}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +39,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primaryColor: primaryColor, canvasColor: Colors.transparent),
       routes: {
-        '/': (BuildContext _) => welcomeScreen(),
+        '/': (BuildContext _) => splashScreenPage(email: dataEmail),
         // '/home': (BuildContext _) => splashScreenPage(email: dataEmail),
       },
       initialRoute: '/',

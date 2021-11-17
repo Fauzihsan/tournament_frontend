@@ -14,7 +14,9 @@ class _homeScreenState extends State<homeScreen> {
   List data = List.empty();
 
   Future logout() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
+    WidgetsFlutterBinding.ensureInitialized();
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final sp = await _prefs;
     sp.remove('email');
     Fluttertoast.showToast(
         msg: "BERHASIL LOGOUT",
@@ -78,12 +80,6 @@ class _homeScreenState extends State<homeScreen> {
         title: Text(widget.dataEmail,
             style: TextStyle(color: Color.fromRGBO(0, 103, 102, 1))),
         backgroundColor: Colors.white70,
-        leading: GestureDetector(
-          onTap: () {/* Write listener code here */},
-          child: Icon(
-            Icons.menu, // add custom icons also
-          ),
-        ),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 20.0),
@@ -222,6 +218,36 @@ class _homeScreenState extends State<homeScreen> {
                   ),
                 ));
           },
+        ),
+      ),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.all(10),
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Text('Welcome'),
+            ),
+            ListTile(
+              title: const Text('Pengaturan'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+                color: Colors.red,
+                child: Text("LOGOUT"),
+                onPressed: () => logout()),
+          ],
         ),
       ),
     );

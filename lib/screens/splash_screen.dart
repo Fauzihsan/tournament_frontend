@@ -10,8 +10,8 @@ class splashScreenPage extends StatelessWidget {
     return new SplashScreen(
       seconds: 6,
       navigateAfterSeconds:
-          email == null ? welcomeScreen() : homeScreen(dataEmail: email),
-      title: new Text(email),
+          email == "" ? const welcomeScreen() : homeScreen(dataEmail: email),
+      title: Text(email),
       photoSize: 150.0,
     );
   }
