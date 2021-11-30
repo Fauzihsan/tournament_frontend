@@ -8,7 +8,13 @@ class modalRegister extends StatefulWidget {
 }
 
 class _modalRegisterState extends State<modalRegister> {
-  String emailDaftar = "", passwordDaftar = "", role = "", name = "";
+  String emailDaftar = "",
+      passwordDaftar = "",
+      role = "",
+      name = "",
+      img64 = "";
+
+  File foto = File("");
 
   TextEditingController emailController = TextEditingController();
   void register() async {
@@ -17,6 +23,7 @@ class _modalRegisterState extends State<modalRegister> {
       'password': passwordDaftar,
       'role': role,
       'name': name,
+      'image': img64,
     };
 
     var res = await Network().authData(data, '/register');
@@ -48,6 +55,82 @@ class _modalRegisterState extends State<modalRegister> {
 
   bool _isObscure = true;
   bool _isChecked = false;
+
+  Future getImage(ImageSource media) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: media);
+
+    setState(() {
+      if (image != null) {
+        foto = File(image.path);
+
+        var extension = "";
+        try {
+          extension = path.extension(image.path).replaceAll('.', '');
+        } catch (e) {
+          extension = "jpg";
+        }
+        try {
+          final bytes = IO.File(image.path).readAsBytesSync();
+          img64 = "data:image/" + extension + ";base64," + base64Encode(bytes);
+        } catch (e) {
+          print(e);
+        }
+
+        // final bytes = IO.File(foto.path.split('/').last).readAsBytesSync();
+        // img64 = base64Encode(foto.readAsBytesSync());
+        // print(img64.substring(0, 100));
+        print(img64);
+        print(foto);
+        print("HAI");
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  void myAlert() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            title: Text('Please choose media to select'),
+            content: Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                children: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      getImage(ImageSource.gallery);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.image),
+                        Text('From Gallery'),
+                      ],
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      getImage(ImageSource.camera);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.camera),
+                        Text('From Camera'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +199,7 @@ class _modalRegisterState extends State<modalRegister> {
                             )
                           ],
                         ),
-                        SizedBox(height: 25),
+                        SizedBox(height: 20),
                         //FIELD EMAIL
                         TextField(
                             controller: emailController,
@@ -146,7 +229,7 @@ class _modalRegisterState extends State<modalRegister> {
                                     color: Colors.white,
                                   ),
                                 ))),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
 
                         //FIELD NAMA
                         TextField(
@@ -176,7 +259,7 @@ class _modalRegisterState extends State<modalRegister> {
                                     color: Colors.white,
                                   ),
                                 ))),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
 
                         //FIELD PASSWORD
                         TextField(
@@ -213,7 +296,7 @@ class _modalRegisterState extends State<modalRegister> {
                                     });
                                   },
                                 ))),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
 
                         //FIELD ROLE
                         TextField(
@@ -243,7 +326,33 @@ class _modalRegisterState extends State<modalRegister> {
                                     color: Colors.white,
                                   ),
                                 ))),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            MaterialButton(
+                                color: Colors.red,
+                                child: Text("UPLOAD IMAGE"),
+                                onPressed: () => myAlert()),
+                            Spacer(),
+                            // foto == null
+                            //     ? CircleAvatar(
+                            //         radius: 30,
+                            //       )
+                            //     :
+                            Container(
+                              width: 200,
+                              height: 200,
+                              color: Colors.black26,
+                              child: foto != null
+                                  ? Image.file(
+                                      foto,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Text("Test"),
+                            ),
+                          ],
+                        ),
+                        Text(foto.path),
                         Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width -

@@ -13,11 +13,14 @@ class homeScreen extends StatefulWidget {
 class _homeScreenState extends State<homeScreen> {
   List data = List.empty();
 
+  final String _url =
+      'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg';
+
   Future logout() async {
     WidgetsFlutterBinding.ensureInitialized();
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final sp = await _prefs;
-    sp.remove('email');
+    await sp.clear();
     Fluttertoast.showToast(
         msg: "BERHASIL LOGOUT",
         toastLength: Toast.LENGTH_SHORT,
@@ -134,10 +137,7 @@ class _homeScreenState extends State<homeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               CircleAvatar(
-                                child: Text(
-                                  data[index]["name"][0],
-                                  style: TextStyle(fontSize: 30),
-                                ),
+                                child: Image.network(_url),
                                 radius: 30,
                               ),
                               Padding(
@@ -220,36 +220,70 @@ class _homeScreenState extends State<homeScreen> {
           },
         ),
       ),
+      // drawer: Drawer(
+      //   // Add a ListView to the drawer. This ensures the user can scroll
+      //   // through the options in the drawer if there isn't enough vertical
+      //   // space to fit everything.
+      //   child: ListView(
+      //     // Important: Remove any padding from the ListView.
+      //     padding: EdgeInsets.all(10),
+      //     children: [
+      //       const DrawerHeader(
+      //         decoration: BoxDecoration(
+      //           color: Colors.white,
+      //         ),
+      //         child: Text('Welcome'),
+      //       ),
+      //       ListTile(
+      //         title: const Text('Pengaturan'),
+      //         onTap: () {
+      //           // Update the state of the app
+      //           // ...
+      //           // Then close the drawer
+      //           Navigator.pop(context);
+      //         },
+      //       ),
+      //       MaterialButton(
+      //           color: Colors.red,
+      //           child: Text("LOGOUT"),
+      //           onPressed: () => logout()),
+      //     ],
+      //   ),
+      // ),
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.all(10),
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.white,
+          elevation: 20.0,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('Admin'),
+                accountEmail: Text(widget.dataEmail),
+                currentAccountPicture: CircleAvatar(
+                  child: Text(
+                    "U",
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  radius: 30,
+                ),
+                decoration: BoxDecoration(color: Colors.blueAccent),
               ),
-              child: Text('Welcome'),
-            ),
-            ListTile(
-              title: const Text('Pengaturan'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            MaterialButton(
-                color: Colors.red,
-                child: Text("LOGOUT"),
-                onPressed: () => logout()),
-          ],
-        ),
-      ),
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Item 1'),
+                onTap: () {
+                  // This line code will close drawer programatically....
+                  Navigator.pop(context);
+                },
+              ),
+              MaterialButton(
+                  color: Colors.red,
+                  child: Text("LOGOUT"),
+                  onPressed: () => logout()),
+              Divider(
+                height: 2.0,
+              ),
+            ],
+          )),
     );
   }
 }
