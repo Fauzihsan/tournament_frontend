@@ -136,8 +136,17 @@ class _homeScreenState extends State<homeScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              // CircleAvatar(
+                              //   child: Image.network(
+                              //       "http://192.168.100.190:8000/api/image",
+                              //       fit: BoxFit.cover),
+                              //   radius: 30,
+                              // ),
                               CircleAvatar(
-                                child: Image.network(_url),
+                                child: Image.network(
+                                    "http://localhost:8000/api/image/",
+                                    // "http://192.168.100.190:8000/api/image/",
+                                    fit: BoxFit.cover),
                                 radius: 30,
                               ),
                               Padding(

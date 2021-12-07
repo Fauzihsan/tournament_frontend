@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Network {
-  final String _url = 'http://192.168.100.190:8000/api';
-  // final String _url = 'http://localhost:8000/api';
+  // final String _url = 'http://192.168.100.190:8000/api';
+  final String _url = 'http://localhost:8000/api';
 
   authData(data, apiUrl) async {
     var fullUrl = _url + apiUrl;
